@@ -10,8 +10,16 @@ const keyword$ = fromEvent(document.querySelector('#keyword'), 'input').pipe(
   map((event) => (event.target as HTMLInputElement).value)
 );
 
-keyword$.subscribe((keyword) => {
-  dataUtils.getSuggestions(keyword).subscribe((suggestions) => {
+// avoid nested subscribe
+// keyword$.subscribe((keyword) => {
+//   dataUtils.getSuggestions(keyword).subscribe((suggestions) => {
+//     domUtils.fillAutoSuggestions(suggestions);
+//   });
+// });
+
+// 使用switchMap解決nested subscribe
+keyword$
+  .pipe(switchMap((keyword) => dataUtils.getSuggestions(keyword)))
+  .subscribe((suggestions) => {
     domUtils.fillAutoSuggestions(suggestions);
   });
-});
