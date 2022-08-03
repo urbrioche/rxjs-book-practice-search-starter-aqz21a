@@ -40,11 +40,20 @@ keyword$
 
 // search button
 const search$ = fromEvent(document.querySelector('#search'), 'click');
-search$
-  .pipe(
-    switchMap(() => {
-      const input = document.querySelector('#keyword') as HTMLInputElement;
-      return dataUtils.getSearchResult(input.value);
-    })
-  )
-  .subscribe((result) => domUtils.fillSearchResult(result));
+// search$
+//   .pipe(
+//     switchMap(() => {
+//       const input = document.querySelector('#keyword') as HTMLInputElement;
+//       return dataUtils.getSearchResult(input.value);
+//     })
+//   )
+//   .subscribe((result) => domUtils.fillSearchResult(result));
+
+const searchByKeyword$ = search$.pipe(
+  switchMap(() => keyword$),
+  switchMap((keyword) => dataUtils.getSearchResult(keyword))
+);
+
+searchByKeyword$.subscribe((result) => {
+  domUtils.fillSearchResult(result);
+});
