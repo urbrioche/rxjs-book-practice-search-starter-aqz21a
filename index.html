@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+<div id="searchPanel">
+	<h1>Search</h1>
+	<div class="form-inline">
+		<div class="form-group">
+			<input type="text" id="keyword" placeholder="keyword" list="suggestions" class="form-control" />
+			<datalist id="suggestions"></datalist>
+		</div>
+		<button id="search" class="btn btn-primary">Search</button>
+	</div>
+</div>
+
+<h1>Result</h1>
+
+<div id="paginationPanel" class="d-flex justify-content-start align-items-center">
+	<select id="per-page" class="form-control" style="width: 100px">
+    <option value="10" selected>10</option>
+    <option value="20">20</option>
+    <option value="50">50</option>
+  </select>
+	<div class="flex-fill"></div>
+	<button id="previous-page" class="btn btn-primary">Previous Page</button>
+	<span id="page-number">1</span>
+	<button id="next-page" class="btn btn-primary">Next Page</button>
+</div>
+
+<div id="resultPanel">
+	<table id="repositories" class="table">
+		<thead>
+			<th>
+				Name
+			</th>
+			<th>
+				<span id="sort-stars">
+          Stars
+        </span>
+				<span id="sort-stars-icon"></span>
+			</th>
+			<th>
+				<span id="sort-forks">
+			    Forks
+        </span>
+				<span id="sort-forks-icon"></span>
+			</th>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</div>
+
+<div id="loading-block" style="display:none; background: rgba(0, 0, 0, 0.6); position: absolute; top: 0; left: 0;">
+</div>
