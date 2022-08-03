@@ -7,6 +7,7 @@ import { fromEvent } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  filter,
   map,
   switchMap,
 } from 'rxjs/operators';
@@ -29,6 +30,8 @@ keyword$
     debounceTime(700),
     // 避免重複查詢
     distinctUntilChanged(),
+    // 避免內容太少查不出精準內容
+    filter((keyword) => keyword.length >= 3),
     switchMap((keyword) => dataUtils.getSuggestions(keyword))
   )
   .subscribe((suggestions) => {
