@@ -11,6 +11,7 @@ import {
   map,
   shareReplay,
   switchMap,
+  take,
 } from 'rxjs/operators';
 
 const keyword$ = fromEvent(document.querySelector('#keyword'), 'input').pipe(
@@ -51,8 +52,10 @@ const search$ = fromEvent(document.querySelector('#search'), 'click');
 //   )
 //   .subscribe((result) => domUtils.fillSearchResult(result));
 
+const keywordForSearch$ = keyword$.pipe(take(1));
+
 const searchByKeyword$ = search$.pipe(
-  switchMap(() => keyword$),
+  switchMap(() => keywordForSearch$),
   switchMap((keyword) => dataUtils.getSearchResult(keyword))
 );
 
