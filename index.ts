@@ -9,11 +9,13 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  shareReplay,
   switchMap,
 } from 'rxjs/operators';
 
 const keyword$ = fromEvent(document.querySelector('#keyword'), 'input').pipe(
-  map((event) => (event.target as HTMLInputElement).value)
+  map((event) => (event.target as HTMLInputElement).value),
+  shareReplay(1)
 );
 
 // avoid nested subscribe
@@ -55,5 +57,6 @@ const searchByKeyword$ = search$.pipe(
 );
 
 searchByKeyword$.subscribe((result) => {
+  console.log('search');
   domUtils.fillSearchResult(result);
 });
