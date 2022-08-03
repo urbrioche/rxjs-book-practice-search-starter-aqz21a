@@ -19,7 +19,10 @@ const keyword$ = fromEvent(document.querySelector('#keyword'), 'input').pipe(
 
 // 使用switchMap解決nested subscribe
 keyword$
-  .pipe(switchMap((keyword) => dataUtils.getSuggestions(keyword)))
+  .pipe(
+    debounceTime(700),
+    switchMap((keyword) => dataUtils.getSuggestions(keyword))
+  )
   .subscribe((suggestions) => {
     domUtils.fillAutoSuggestions(suggestions);
   });
