@@ -64,10 +64,34 @@ const search$ = fromEvent(document.querySelector('#search'), 'click');
 // 否則，你每打一次keyword，既會suggest也會search
 const keywordForSearch$ = keyword$.pipe(take(1));
 
+// const searchByKeyword$ = search$.pipe(
+//   switchMap(() => keywordForSearch$),
+//   switchMap((keyword) => dataUtils.getSearchResult(keyword))
+// );
+
+// keyword沒輸入 按search會出錯(getSearchResult)，事件監聽也會停止
+// 即使重新key keyword，search button怎麼按都沒效
+// 用cathError解決 (書裡沒示範這個情境)
+// https://www.learnrxjs.io/learn-rxjs/operators/error_handling/catch
+// error and continue listening
 const searchByKeyword$ = search$.pipe(
   switchMap(() => keywordForSearch$),
-  switchMap((keyword) => dataUtils.getSearchResult(keyword))
+  switchMap((keyword) =>
+    dataUtils.getSearchResult(keyword).pipe(catchError((err) => of([])))
+  )
 );
+
+// error but stop listening
+// const searchByKeyword$ = search$.pipe(
+//   switchMap(() => keywordForSearch$),
+//   switchMap((keyword) =>
+//     dataUtils.getSearchResult(keyword)
+//   ),
+//   catchError((err) => {
+//     console.log(err, 'err');
+//     return of([]);
+//   })
+// );
 
 searchByKeyword$.subscribe((result) => {
   console.log(result);
