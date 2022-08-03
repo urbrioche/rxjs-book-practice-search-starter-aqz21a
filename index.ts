@@ -16,6 +16,10 @@ import {
 
 const keyword$ = fromEvent(document.querySelector('#keyword'), 'input').pipe(
   map((event) => (event.target as HTMLInputElement).value),
+  // 加上shareReplay(1)是為了共享最後一次事件
+  // 否則按search button不會去查詢
+  // 要再去變動一下keyword，讓他產生資料流才會，才會真的去查詢
+  // 步驟變成: click search button -> change keyword -> 不合邏輯
   shareReplay(1)
 );
 
@@ -52,6 +56,8 @@ const search$ = fromEvent(document.querySelector('#search'), 'click');
 //   )
 //   .subscribe((result) => domUtils.fillSearchResult(result));
 
+// 這邊加take(1)是為了讓keywords$資料流能結束
+// 否則，你每打一次keyword，既會suggest也會search
 const keywordForSearch$ = keyword$.pipe(take(1));
 
 const searchByKeyword$ = search$.pipe(
