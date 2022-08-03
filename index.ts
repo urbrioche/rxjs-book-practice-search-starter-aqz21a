@@ -69,3 +69,12 @@ searchByKeyword$.subscribe((result) => {
   console.log('search');
   domUtils.fillSearchResult(result);
 });
+
+// 目前版本的問題
+// 一進來就按search
+// 因為keyword根本還沒發生資料流
+// shareReplay(1)及take(1) 沒作用
+// keywordForSearch$ 不會立刻結束
+// 此時user意識到操作錯誤
+// 下一個動作在keyword輸入要查詢的關鍵字，但還沒按Search
+// 這是會發現search是有被執行的 (下方表格有資料)
