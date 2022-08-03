@@ -3,19 +3,23 @@ import * as domUtils from './dom-utils';
 
 // 存取 API 資料的程式碼
 import * as dataUtils from './data-utils';
-import { fromEvent } from 'rxjs';
+import { fromEvent, of } from 'rxjs';
 import {
+  catchError,
   debounceTime,
   distinctUntilChanged,
   filter,
   map,
   shareReplay,
+  startWith,
   switchMap,
   take,
 } from 'rxjs/operators';
 
 const keyword$ = fromEvent(document.querySelector('#keyword'), 'input').pipe(
   map((event) => (event.target as HTMLInputElement).value),
+  // 讓資料流有初始值，解決先按search再輸入keyword的資料流問題
+  startWith(''),
   // 加上shareReplay(1)是為了共享最後一次事件
   // 否則按search button不會去查詢
   // 要再去變動一下keyword，讓他產生資料流才會，才會真的去查詢
@@ -66,6 +70,7 @@ const searchByKeyword$ = search$.pipe(
 );
 
 searchByKeyword$.subscribe((result) => {
+  console.log(result);
   console.log('search');
   domUtils.fillSearchResult(result);
 });
