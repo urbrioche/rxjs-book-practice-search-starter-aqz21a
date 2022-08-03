@@ -37,3 +37,14 @@ keyword$
   .subscribe((suggestions) => {
     domUtils.fillAutoSuggestions(suggestions);
   });
+
+// search button
+const search$ = fromEvent(document.querySelector('#search'), 'click');
+search$
+  .pipe(
+    switchMap(() => {
+      const input = document.querySelector('#keyword') as HTMLInputElement;
+      return dataUtils.getSearchResult(input.value);
+    })
+  )
+  .subscribe((result) => domUtils.fillSearchResult(result));
