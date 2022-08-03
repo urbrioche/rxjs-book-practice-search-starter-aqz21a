@@ -76,6 +76,8 @@ const keywordForSearch$ = keyword$.pipe(take(1));
 // error and continue listening
 const searchByKeyword$ = search$.pipe(
   switchMap(() => keywordForSearch$),
+  // 加上filter，避免空值查詢出錯
+  filter((keyword) => !!keyword),
   switchMap((keyword) =>
     dataUtils.getSearchResult(keyword).pipe(catchError((err) => of([])))
   )
