@@ -187,3 +187,15 @@ searchResult$.subscribe((result) => {
   console.log('fillSearchResult');
   domUtils.fillSearchResult(result);
 });
+
+page$.subscribe((page) => {
+  domUtils.updatePageNumber(page);
+});
+
+sortBy$.pipe(filter((sort) => sort.sort === 'starts')).subscribe((sort) => {
+  domUtils.updateStarsSort(sort);
+});
+
+sortBy$.pipe(filter((sort) => sort.sort === 'forks')).subscribe((sort) => {
+  domUtils.updateForksSort(sort);
+});
