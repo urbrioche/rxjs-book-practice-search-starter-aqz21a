@@ -3,7 +3,7 @@ import * as domUtils from './dom-utils';
 
 // 存取 API 資料的程式碼
 import * as dataUtils from './data-utils';
-import { fromEvent, of } from 'rxjs';
+import { BehaviorSubject, fromEvent, of } from 'rxjs';
 import {
   catchError,
   debounceTime,
@@ -101,11 +101,30 @@ searchByKeyword$.subscribe((result) => {
   domUtils.fillSearchResult(result);
 });
 
-// 目前版本的問題
-// 一進來就按search
-// 因為keyword根本還沒發生資料流
-// shareReplay(1)及take(1) 沒作用
-// keywordForSearch$ 不會立刻結束
-// 此時user意識到操作錯誤
-// 下一個動作在keyword輸入要查詢的關鍵字，但還沒按Search
-// 這是會發現search是有被執行的 (下方表格有資料)
+// 建立BehaviorSubject，預設使用stars進行降冪排序
+const sortBy$ = new BehaviorSubject({
+  sort: 'stars',
+  order: 'desc',
+});
+
+const changeSort = (sortField: string) => {
+  if (sortField === sortBy$.value.sort) {
+    sortBy$.next({
+      sort: sortField,
+      order: sortBy$.value.order === 'asc' ? 'desc' : 'asc',
+    });
+  } else {
+    sortBy$.next({
+      sort: sortField,
+      order: 'desc',
+    });
+  }
+};
+
+fromEvent(document.querySelector('#sort-stars'), 'click').subscribe(() => {
+  changeSort('stars');
+});
+
+fromEvent(document.querySelector('#sort-forks'), 'click').subscribe(() => {
+  changeSort('forks');
+});
