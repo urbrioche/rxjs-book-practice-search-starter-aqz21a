@@ -178,15 +178,32 @@ startSearch$.subscribe(() => {
 
 const searchResult$ = startSearch$.pipe(
   switchMap(({ keyword, sort, page, perPage }) => {
-    return (
-      dataUtils
-        .getSearchResult(keyword, sort.sort, sort.order, page, perPage)
-        // 放這裡才正確
-        .pipe(catchError(() => of([])))
-    );
+    return dataUtils
+      .getSearchResult(keyword, sort.sort, sort.order, page, perPage)
+      .pipe(
+        map((result) => {
+          console.log('看一下conosle，觀察按search後，這段是否進入兩次');
+          return result;
+        }),
+        // 為顯示錯誤訊息做準備
+        map((result) => ({
+          success: true,
+          message: null,
+          data: result,
+        })),
+        // 錯誤處理放這裡才正確
+        catchError((error) =>
+          of({
+            success: false,
+            message: error.response.message,
+            data: [],
+          })
+        )
+      );
   })
 );
 
+// searchResult$訂閱第一次 for display data
 searchResult$
   /* 這段錯誤處理要搬到上面dataUtils.getSearchResult 才是正確的
   .pipe(
@@ -199,10 +216,15 @@ searchResult$
   */
   .subscribe((result) => {
     console.log('fillSearchResult');
-    domUtils.fillSearchResult(result);
+    domUtils.fillSearchResult(result.data);
     // unblock UI
     domUtils.loaded();
   });
+
+// searchResult$訂閱第二次 for alert
+searchResult$.pipe(filter((result) => !result.success)).subscribe((result) => {
+  alert(result.message);
+});
 
 page$.subscribe((page) => {
   domUtils.updatePageNumber(page);
