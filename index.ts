@@ -12,6 +12,7 @@ import {
   map,
   mapTo,
   scan,
+  share,
   shareReplay,
   startWith,
   switchMap,
@@ -200,7 +201,10 @@ const searchResult$ = startSearch$.pipe(
           })
         )
       );
-  })
+  }),
+  // searchResult$有多次訂閱
+  // 因此使用share避免重複請求資料
+  share()
 );
 
 // searchResult$訂閱第一次 for display data
@@ -222,6 +226,8 @@ searchResult$
   });
 
 // searchResult$訂閱第二次 for alert
+// 這次訂閱也會跑完整的資料流，也就是ajax的查詢也會再跑一次
+// -> 要在上方searchResult定義資料流的地方加share()
 searchResult$.pipe(filter((result) => !result.success)).subscribe((result) => {
   alert(result.message);
 });
