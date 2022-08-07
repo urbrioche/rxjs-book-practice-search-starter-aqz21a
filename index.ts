@@ -178,17 +178,17 @@ startSearch$.subscribe(() => {
 
 const searchResult$ = startSearch$.pipe(
   switchMap(({ keyword, sort, page, perPage }) => {
-    return dataUtils.getSearchResult(
-      keyword,
-      sort.sort,
-      sort.order,
-      page,
-      perPage
+    return (
+      dataUtils
+        .getSearchResult(keyword, sort.sort, sort.order, page, perPage)
+        // 放這裡才正確
+        .pipe(catchError(() => of([])))
     );
   })
 );
 
 searchResult$
+  /* 這段錯誤處理要搬到上面dataUtils.getSearchResult 才是正確的
   .pipe(
     // 處理搜尋事件的錯誤，以避免整個資料流從此中斷
     // 當發生錯誤時，回傳空白資料
@@ -196,6 +196,7 @@ searchResult$
     // 因為在這裡回傳空陣列，會使訂閱結束
     catchError(() => of([]))
   )
+  */
   .subscribe((result) => {
     console.log('fillSearchResult');
     domUtils.fillSearchResult(result);
