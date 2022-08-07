@@ -171,6 +171,7 @@ const startSearch$ = combineLatest({
   perPage: perPage$.pipe(startWith(10)),
 });
 
+// block UI
 startSearch$.subscribe(() => {
   domUtils.loading();
 });
@@ -187,11 +188,20 @@ const searchResult$ = startSearch$.pipe(
   })
 );
 
-searchResult$.subscribe((result) => {
-  console.log('fillSearchResult');
-  domUtils.fillSearchResult(result);
-  domUtils.loaded();
-});
+searchResult$
+  .pipe(
+    // 處理搜尋事件的錯誤，以避免整個資料流從此中斷
+    // 當發生錯誤時，回傳空白資料
+    // 看似可行，但實際上不可行
+    // 因為在這裡回傳空陣列，會使訂閱結束
+    catchError(() => of([]))
+  )
+  .subscribe((result) => {
+    console.log('fillSearchResult');
+    domUtils.fillSearchResult(result);
+    // unblock UI
+    domUtils.loaded();
+  });
 
 page$.subscribe((page) => {
   domUtils.updatePageNumber(page);
