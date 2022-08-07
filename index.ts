@@ -171,6 +171,10 @@ const startSearch$ = combineLatest({
   perPage: perPage$.pipe(startWith(10)),
 });
 
+startSearch$.subscribe(() => {
+  domUtils.loading();
+});
+
 const searchResult$ = startSearch$.pipe(
   switchMap(({ keyword, sort, page, perPage }) => {
     return dataUtils.getSearchResult(
@@ -186,6 +190,7 @@ const searchResult$ = startSearch$.pipe(
 searchResult$.subscribe((result) => {
   console.log('fillSearchResult');
   domUtils.fillSearchResult(result);
+  domUtils.loaded();
 });
 
 page$.subscribe((page) => {
